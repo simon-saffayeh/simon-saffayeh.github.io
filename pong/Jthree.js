@@ -32,17 +32,26 @@ let player = 0
 let enemy = 0
 //objects
 
+const standout_material = new THREE.MeshBasicMaterial({
+  color:0xff0000,
+
+})
+
+
 
 //floor
 const bottom_geometry = new THREE.BoxGeometry(dimentions,1,dimentions)
-const bottom_material = new THREE.MeshBasicMaterial({
+const boundry_material = new THREE.MeshBasicMaterial({
   color:0xc4dbff
 })
-const bottom_mesh = new THREE.Mesh(bottom_geometry,bottom_material)
+const bottom_mesh = new THREE.Mesh(bottom_geometry,boundry_material)
 scene.add(bottom_mesh)
 
-
-
+//walls
+const side1_geometry = new THREE.BoxGeometry(dimentions,2,1)
+const side1_mesh = new THREE.Mesh(side1_geometry,standout_material)
+scene.add(side1_mesh)
+side1_mesh.position.set(0,0.5,dimentions/2+0.5)
 //ball
 const ball_geometry = new THREE.BoxGeometry(1,1,1)
 const ball_material = new THREE.MeshBasicMaterial({
@@ -57,8 +66,10 @@ ball_mesh.position.set(0,1,0)
 //paddle
 
 const paddle_geometry = new THREE.BoxGeometry(5,1,1)
-const paddle_material = new THREE.MeshBasicMaterial({
-  color:0xff0,
+
+const paddle_material = new THREE.MeshMatcapMaterial({
+  transparent:true,
+  opacity:0.95,
 })
 const paddle_mesh = new THREE.Mesh(paddle_geometry,paddle_material)
 scene.add(paddle_mesh)
@@ -86,8 +97,10 @@ function animate(){
       velx *= -1.1
     }
 
-    if(ballz > ((dimentions/2)-1)){
+    if(ballz > ((dimentions/2)-0.5)){
       console.log("you suck")
+      velx = 0
+      velz = 0
     }
     if(ballz < -((dimentions/2)-1)){
       console.log("you win")
@@ -96,8 +109,7 @@ function animate(){
       console.log("good")
       velz *= -1.1
     }
-    console.log(`${-ballz} < ${(dimentions/2)+2}`)
-    if(-ballz < -(dimentions/2)+2 && ballx>(enemy-2) && ballx < (enemy+2)){
+    if(-ballz > (dimentions/2)-2 && ballx>(enemy-2) && ballx < (enemy+2)){
       console.log("haha, defended")
       velz *= -1.1
     }
@@ -106,6 +118,7 @@ function animate(){
     ball_mesh.position.set(ballx,1,ballz)
     paddle_mesh.position.set(player,1,((dimentions/2)-0.5))
     enemy_mesh.position.set(ballx,1,-((dimentions/2)-0.5))
+    enemy = ballx
   }
   
   animate()
