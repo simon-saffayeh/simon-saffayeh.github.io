@@ -26,7 +26,9 @@ const dimentions = 50
 let ballx = 0
 let ballz = 0
 let velx = 0.12
-let velz = 0.13
+let velz = 0.2
+// let velx = 0
+// let velz = 0
 let random = Math.random()
 let player = 0
 let enemy = 0
@@ -37,7 +39,11 @@ const standout_material = new THREE.MeshBasicMaterial({
 
 })
 
-
+const wall_material = new THREE.MeshMatcapMaterial({
+  transparent:true,
+  opacity:0.95,
+  color: 0xc4dbff
+})
 
 //floor
 const bottom_geometry = new THREE.BoxGeometry(dimentions,1,dimentions)
@@ -49,9 +55,26 @@ scene.add(bottom_mesh)
 
 //walls
 const side1_geometry = new THREE.BoxGeometry(dimentions,2,1)
-const side1_mesh = new THREE.Mesh(side1_geometry,standout_material)
+const side1_mesh = new THREE.Mesh(side1_geometry,wall_material)
 scene.add(side1_mesh)
 side1_mesh.position.set(0,0.5,dimentions/2+0.5)
+
+const side2_geometry = new THREE.BoxGeometry(dimentions,2,1)
+const side2_mesh = new THREE.Mesh(side2_geometry,wall_material)
+scene.add(side2_mesh)
+side2_mesh.position.set(0,0.5,-dimentions/2-0.5)
+
+const side3_geometry = new THREE.BoxGeometry(1,2,dimentions+2)
+const side3_mesh = new THREE.Mesh(side3_geometry,wall_material)
+scene.add(side3_mesh)
+side3_mesh.position.set(-dimentions/2-0.5,0.5,0)
+
+const side4_geometry = new THREE.BoxGeometry(1,2,dimentions+2)
+const side4_mesh = new THREE.Mesh(side4_geometry,wall_material)
+scene.add(side4_mesh)
+side4_mesh.position.set(dimentions/2+0.5,0.5,0)
+
+
 //ball
 const ball_geometry = new THREE.BoxGeometry(1,1,1)
 const ball_material = new THREE.MeshBasicMaterial({
@@ -79,11 +102,20 @@ const enemy_mesh = new THREE.Mesh(paddle_geometry,paddle_material)
 scene.add(enemy_mesh)
 enemy_mesh.position.set(0,1,-((dimentions/2)-0.5))
 document.addEventListener('keydown', function(event) {
+
   if(event.keyCode == 37) {
-    player-=2
+    if(player > -(dimentions/2)+4.5){
+      player-=2
+    } else{
+      player -= (dimentions/2-2.5)+player
+    }
   }
   else if(event.keyCode == 39) {
-player+=2
+    if(player < dimentions/2-4.5){
+      player+=2
+    } else{
+      player += ((dimentions/2-2.5)-player)
+    }
   }
 });
 
@@ -98,7 +130,7 @@ function animate(){
     }
 
     if(ballz > ((dimentions/2)-0.5)){
-      console.log("you suck")
+      // console.log("you suck")
       velx = 0
       velz = 0
     }
@@ -108,6 +140,10 @@ function animate(){
     if(ballz > (dimentions/2)-2 && ballx>(player-2) && ballx < (player+2)){
       console.log("good")
       velz *= -1.1
+      velx = -.01*(player-ballz)
+
+      console.log(player-ballx)
+      console.log(`${player}-${ballx}`)
     }
     if(-ballz > (dimentions/2)-2 && ballx>(enemy-2) && ballx < (enemy+2)){
       console.log("haha, defended")
@@ -119,10 +155,12 @@ function animate(){
     paddle_mesh.position.set(player,1,((dimentions/2)-0.5))
     enemy_mesh.position.set(ballx,1,-((dimentions/2)-0.5))
     enemy = ballx
+
   }
   
   animate()
 
-  //make texures better
   //make ball bouncing better
   //make enemy better
+  //make in blender enemy players and make the arrow keys hit real buttons with a n animation
+  //finish making ball bounce better
