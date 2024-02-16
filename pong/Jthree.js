@@ -5,12 +5,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as dat from 'dat.gui'
 import { TextureLoader } from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0x1a1a1a)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1,1000)
 camera.position.set(0,40,0)
 camera.lookAt(0,0,0)
-
 const renderer = new THREE.WebGL1Renderer({
   alpha:true
 })
@@ -21,7 +22,7 @@ const controls = new OrbitControls( camera, renderer.domElement );
 
 
 //varibles
-
+let textMesh;
 const dimentions = 50
 let ballx = 0
 let ballz = 0
@@ -117,7 +118,29 @@ const fontloader = new FontLoader()
 
 fontloader.load('./fonts/Open Sans_Bold.json',function(font){
   console.log(font)
-  const fontGeometry = new THREE.TextGeometry
+  const fontGeometry = new TextGeometry('WIN',{
+  font: font,
+  size: 6,
+  height: 2, 
+  }
+  )
+
+
+  textMesh = new THREE.Mesh(fontGeometry,[
+    new THREE.MeshPhongMaterial({color:0xad4000}),
+    new THREE.MeshPhongMaterial({color:0x5c2301}),
+
+  ])
+
+  textMesh.castShadow = true
+  textMesh.rotation.x = 1.5708
+  textMesh.rotation.y = 3.14159
+  textMesh.rotation.z = 3.14159
+  textMesh.position.x = -9
+  textMesh.position.y = -2
+  textMesh.visible = false
+
+  scene.add(textMesh)
 })
 
 
@@ -177,6 +200,11 @@ function animate(){
     }
     ballx += velx
     ballz += velz
+    if(win == true){
+      textMesh.position.y += 0.1
+      textMesh.visible = true
+
+    }
     ball_mesh.position.set(ballx,1,ballz)
     paddle_mesh.position.set(player,1,((dimentions/2)-0.5))
     if(enemy-2 > ballx){
@@ -190,10 +218,6 @@ function animate(){
   
   animate()
 
-  //make ball bouncing better
-  //make enemy better
   //make in blender enemy players and make the arrow keys hit real buttons with a n animation
-  //finish making ball bounce better
-
-  make the font work correctly
-//make the other enemy better
+  //score and possibly pov button
+  //powerups
